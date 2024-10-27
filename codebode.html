@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>NES Gamepad Tester</title>
+    <style>
+        .button {
+            width: 50px;
+            height: 50px;
+            border: 1px solid black;
+            margin: 5px;
+            display: inline-block;
+            text-align: center;
+        }
+        .pressed {
+            background-color: green;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>NES Gamepad Tester</h1>
+
+    <div id="gamepad-info"></div>
+
+    <div>
+        <div class="button" id="button-a">A</div>
+        <div class="button" id="button-b">B</div>
+        <div class="button" id="button-select">Select</div>
+        <div class="button" id="button-start">Start</div>
+    </div>
+
+    <div>
+        <div class="button" id="button-up">Up</div>
+        <div class="button" id="button-down">Down</div>
+        <div class="button" id="button-left">Left</div>
+        <div class="button" id="button-right">Right</div>
+    </div>
+
+    <script>
+        window.addEventListener("gamepadconnected", (event) => {
+            const gamepad = event.gamepad;
+            const gamepadInfo = document.getElementById("gamepad-info");
+            const gp = navigator.getGamepads()[gamepad.index];
+            gamepadInfo.textContent = `Gamepad connected: ${gamepad.id}`;
+
+            function updateGamepadState() {
+                const gp = navigator.getGamepads()[gamepad.index];
+                if (gp.buttons[9].pressed){
+                    console.log('Start')
+                }
+                if (gp.buttons[0].pressed){
+                    console.log('A')
+                }
+                if (gp.buttons[1].pressed){
+                    console.log('B')
+                }
+                
+                updateButtonState("button-a", gp.buttons[0].pressed);
+                updateButtonState("button-b", gp.buttons[1].pressed);
+                updateButtonState("button-select", gp.buttons[8].pressed);
+                
+                updateButtonState("button-start", gp.buttons[9].pressed);
+
+                updateButtonState("button-up", gp.axes[1] < -0.5);
+                updateButtonState("button-down", gp.axes[1] > 0.5);
+                updateButtonState("button-left", gp.axes[0] < -0.5);
+                updateButtonState("button-right", gp.axes[0] > 0.5);
+
+                requestAnimationFrame(updateGamepadState);
+            }
+
+            function updateButtonState(buttonId, pressed) {
+                const button = document.getElementById(buttonId);
+                if (pressed) {
+                    button.classList.add("pressed");
+                } else {
+                    button.classList.remove("pressed");
+                }
+            }
+
+            updateGamepadState();
+        });
+    </script>
+
+</body>
+</html>
